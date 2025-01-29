@@ -4,13 +4,12 @@ class SignInPage {
     get signInButton() { return $('button[action="signIn"]'); }
     get errorMessage() { return $('.error-message'); }  // Replace with actual error selector
 
-    async open() {
-        await browser.url('https://magento.softwaretestingboard.com/customer/account/login/');
-    }
-
-    async login(email, password) {
+    async enterCredentials(email, password) {
         await this.emailInput.setValue(email);
         await this.passwordInput.setValue(password);
+    }
+
+    async submitSignIn() {
         await this.signInButton.click();
     }
 
