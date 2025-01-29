@@ -1,25 +1,24 @@
-const { Given, When, Then } = require('@cucumber/cucumber');
-const NavigationPage = require('../pageObjects/NavigationPage');
-const { assert } = require('chai');
-const logger = require('../utils/logger');
+const { Given, When, Then } = require('cucumber');
+const shoppingCartPage = require('../pom/shoppingCart.js');
+const winston = require('winston');
 
-// Step: Navigate to Men's category and add items to cart
-When('I add items from the {string} category to the cart', async (category) => {
-    logger.info(Navigating and adding items from ${category} category to the cart...);
-    await NavigationPage.addItemsToCart(category);
-    logger.info(${category} item added to the cart.);
+// Set up the logger
+const logger = winston.createLogger({
+  level: 'info',
+  transports: [
+    new winston.transports.Console({ format: winston.format.simple() }),
+    new winston.transports.File({ filename: 'logfile.log' })
+  ]
 });
 
-// Step: Navigate to the cart to verify added items
-When('I view the cart', async () => {
-    logger.info('Viewing the cart...');
-    await NavigationPage.viewCart();
+When('I add items from the {string} category to the cart', function (category) {
+  logger.info(`Adding items from the "${category}" category to the cart`);
+  shoppingCartPage.addItemToCart(category);
+  logger.info(`Item added to the cart from the "${category}" category`);
 });
 
-// Step: Validate the items in the cart
-Then('I should see the item in the cart', async () => {
-    // Validate cart contents (you can improve this to validate the specific item)
-    const cartText = await $('h1').getText();
-    assert.include(cartText, 'Shopping Cart');
-    logger.info('Item successfully added to the cart.');
+Then('I should see the item in the cart', function () {
+  logger.info('Verifying if the item is in the cart');
+  shoppingCartPage.verifyItemInCart();
+  logger.info('Item verified in the cart');
 });
