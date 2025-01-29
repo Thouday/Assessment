@@ -1,18 +1,19 @@
 class SignInPage {
-    // Locators
-    get emailField() { return $('#email'); }
-    get passwordField() { return $('#pass'); }
-    get signInButton() { return $('#send2'); }
-    get errorMessage() { return $('.message-error'); }
+    get emailInput() { return $('#email'); }
+    get passwordInput() { return $('#pass'); }
+    get signInButton() { return $('button[action="signIn"]'); }
+    get errorMessage() { return $('.error-message'); }  // Replace with actual error selector
 
-    // Method to fill in the Sign In details
+    async open() {
+        await browser.url('https://magento.softwaretestingboard.com/customer/account/login/');
+    }
+
     async login(email, password) {
-        await this.emailField.setValue(email);
-        await this.passwordField.setValue(password);
+        await this.emailInput.setValue(email);
+        await this.passwordInput.setValue(password);
         await this.signInButton.click();
     }
 
-    // Method to validate an error message (if any)
     async getErrorMessage() {
         return await this.errorMessage.getText();
     }
