@@ -1,47 +1,48 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
-const SignInPage = require('../pageObjects/SignInPage');
-const CreateAccountPage = require('../pageObjects/CreateAccountPage');
 const { assert } = require('chai');
+const SignInPage = require('../pageObjects/SignInPage');
+const HomePage = require('../pageObjects/HomePage');
 const logger = require('../utils/logger');
-const data = require('../data');  // Reusable data
+const data = require('../data');  // Reusable data for valid/invalid credentials
 
-// Step: Launch the URL and create an account
-Given('I have created a new account with valid details', async () => {
-    logger.info('Opening Magento website...');
-    await CreateAccountPage.open();  // Navigate to Create Account page
-    logger.info('Opening Create Account page...');
-    
-    // Fill in the account details using data from `data.validCredentials`
-    await CreateAccountPage.fillAccountDetails(
-        data.validCredentials.firstName, 
-        data.validCredentials.lastName, 
-        data.validCredentials.email, 
-        data.validCredentials.password
-    );
-    
-    await CreateAccountPage.submitForm();  // Submit the form to create the account
-    logger.info('Account created successfully.');
+// Step: Open the Magento homepage
+Given('I am on the Magento homepage', async () => {
+    logger.info('Opening Magento homepage...');
+    await browser.url('https://magento.softwaretestingboard.com/');
+    logger.info('Magento homepage opened.');
 });
 
-// Step: Sign in using the created credentials
-When('I sign in with valid credentials', async () => {
-    logger.info('Signing in with valid credentials...');
-    // Use the SignInPage to perform login with the provided credentials
-    await SignInPage.login(data.validCredentials.email, data.validCredentials.password);
-    logger.info('Signed in successfully.');
+// Step: Click the Sign In button on the homepage
+When('I click the Sign In button', async () => {
+    logger.info('Clicking on the Sign In button...');
+    const signInButton = await $('a[href*="customer/account/login"]'); // Locate Sign In button on homepage
+    await signInButton.click();
+    logger.info('Clicked on the Sign In button and redirected to the sign-in page.');
 });
 
-// Step: Validate successful sign-in and redirection to the dashboard
+// Step: Enter valid credentials
+When('I enter valid credentials', async () => {
+    logger.info('Entering valid credentials...');
+    await SignInPage.enterCredentials(data.validCredentials.email, data.validCredentials.password);
+    logger.info('Entered valid credentials.');
+});
+
+// Step: Click the Sign In button on the sign-in page
+When('I click the Sign In button', async () => {
+    logger.info('Clicking the Sign In button on the sign-in page...');
+    await SignInPage.submitSignIn();
+    logger.info('Clicked the Sign In button.');
+});
+
+// Step: Validate successful sign-in
 Then('I should be signed in successfully', async () => {
-    // Check if the user is redirected to the dashboard (could be a specific page element text)
-    const dashboardText = await $('h1').getText();
+    const dashboardText = await $('h1').getText();  // You can change this to a more specific selector based on the actual page
     assert.include(dashboardText, 'My Dashboard', 'User was not redirected to the dashboard.');
-    logger.info('User successfully signed in and redirected to dashboard.');
+    logger.info('User successfully signed in and redirected to the dashboard.');
 });
 
 // Step: Validate error message for invalid credentials
 Then('I should see an error for invalid credentials', async () => {
-    // Retrieve the error message for invalid login attempt
     const errorMessage = await SignInPage.getErrorMessage();
     assert.equal(errorMessage, 'Invalid login or password.', 'Error message for invalid login did not appear.');
     logger.info('Error message displayed for invalid login.');
