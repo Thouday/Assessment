@@ -3,10 +3,10 @@ module.exports = {
         firstName: 'Thouday',
         lastName: 'Pavan Kumar',
         email: 'thouday.pavan99@gmail.com',
-        password: 'Password123'
+        password: 'Pavan@2424'
     },
     invalidCredentials: {
-        email: 'invalid@example.com',
+        email: 'asdfdasf@example.com',
         password: 'wrongPassword'
     },
     categories: {
