@@ -1,6 +1,6 @@
 class CreateAccountPage {
     // Locators
-    get createAccountButton() { return $('a[href="/customer/account/create/"]'); }
+    get createAccountButton() { return $('a[href="Create an Account"]'); }
     get firstNameField() { return $('#firstname'); }
     get lastNameField() { return $('#lastname'); }
     get emailField() { return $('#email_address'); }
